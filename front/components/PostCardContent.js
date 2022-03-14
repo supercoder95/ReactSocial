@@ -11,6 +11,7 @@ const PostCardContent = ({ postData }) => (
           </Link>
         );
       }
+      return v;
     })}
   </div>
 );
