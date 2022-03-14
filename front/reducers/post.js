@@ -29,13 +29,32 @@ export const initialState = {
     },
   ],
   imagePaths: [],
-  postAdded: false,
+  addPostLoading: false,
+  addPostDone: false,
+  addPostError: null,
+  addCommentLoading: false,
+  addCommentDone: false,
+  addCommentError: null,
 };
+// ADD_POST___
+export const ADD_POST_REQUEST = 'ADD_POST_REQUEST';
+export const ADD_POST_SUCCESS = 'ADD_POST_SUCCESS';
+export const ADD_POST_FAILURE = 'ADD_POST_FAILURE';
 
-const ADD_POST = 'ADD_POST';
-export const addPost = {
-  type: ADD_POST,
-};
+export const ADD_COMMENT_REQUEST = 'ADD_COMMENT_REQUEST';
+export const ADD_COMMENT_SUCCESS = 'ADD_COMMENT_SUCCESS';
+export const ADD_COMMENT_FAILURE = 'ADD_COMMENT_FAILURE';
+
+export const addPost = (data) => ({
+  type: ADD_POST_REQUEST,
+  data,
+});
+
+export const addComment = (data) => ({
+  type: ADD_COMMENT_REQUEST,
+  data,
+});
+
 const dummyPost = {
   User: {
     id: 1,
@@ -47,11 +66,50 @@ const dummyPost = {
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {
-    case ADD_POST:
+    // ADD_POST___
+    case ADD_POST_REQUEST:
+      return {
+        ...state,
+        addPostLoading: true,
+        addPostError: null,
+        addPostDone: false,
+      };
+    case ADD_POST_SUCCESS:
       return {
         ...state,
         mainPosts: [dummyPost, ...state.mainPosts],
-        postAdded: true,
+        addPostLoading: false,
+        addPostError: null,
+        addPostDone: true,
+      };
+    case ADD_POST_FAILURE:
+      return {
+        ...state,
+        addPostLoading: false,
+        addPostError: action.error,
+        addPostDone: false,
+      };
+    // ADD_COMMENT___
+    case ADD_COMMENT_REQUEST:
+      return {
+        ...state,
+        addCommentLoading: true,
+        addCommentError: null,
+        addCommentDone: false,
+      };
+    case ADD_COMMENT_SUCCESS:
+      return {
+        ...state,
+        addCommentLoading: false,
+        addCommentError: null,
+        addCommentDone: true,
+      };
+    case ADD_COMMENT_FAILURE:
+      return {
+        ...state,
+        addCommentLoading: false,
+        addCommentError: action.error,
+        addCommentDone: false,
       };
     default:
       return state;
