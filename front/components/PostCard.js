@@ -7,16 +7,18 @@ import {
 } from '@ant-design/icons';
 import PropTypes from 'prop-types';
 import { Avatar, Button, Card, Comment, Image, List, Popover } from 'antd';
-import ButtonGroup from 'antd/lib/button/button-group';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import PostImages from './PostImages';
 import PostCardContent from './PostCardContent';
 import { useCallback, useState } from 'react';
 import CommentForm from './CommentForm';
+import { REMOVE_POST_REQUEST } from '../reducers/post';
 
 const PostCard = ({ post }) => {
+  const dispatch = useDispatch();
   const [liked, setLiked] = useState(false);
   const [commnetFormOpened, setCommentFormOpened] = useState(false);
+  const { removePostLoading } = useSelector((state) => state.post);
   const onToggleLike = useCallback(() => {
     setLiked((prev) => !prev);
   }, []);
@@ -24,6 +26,12 @@ const PostCard = ({ post }) => {
     setCommentFormOpened((prev) => !prev);
   }, []);
   const id = useSelector((state) => state.user.me?.id);
+  const onRemovePost = useCallback(() => {
+    dispatch({
+      type: REMOVE_POST_REQUEST,
+      data: post.id,
+    });
+  }, []);
 
   return (
     <div style={{ marginBottom: 20 }}>
@@ -48,7 +56,13 @@ const PostCard = ({ post }) => {
                 {id && post.User.id === id ? (
                   <>
                     <Button>수정</Button>
-                    <Button type="danger">삭제</Button>
+                    <Button
+                      type="danger"
+                      loading={removePostLoading}
+                      onClick={onRemovePost}
+                    >
+                      삭제
+                    </Button>
                   </>
                 ) : (
                   <Button>신고</Button>

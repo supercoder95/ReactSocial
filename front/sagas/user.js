@@ -87,7 +87,7 @@ function* watchLogOut() {
   yield takeLatest(LOG_OUT_REQUEST, logOut);
 }
 function* watchSignUp() {
-  yield takeLatest(SIGN_UP_REQUEST, logOut);
+  yield takeLatest(SIGN_UP_REQUEST, signUp);
 }
 
 // generator userSaga function

@@ -40,13 +40,26 @@ export const UNFOLLOW_REQUEST = 'UNFOLLOW_REQUEST';
 export const UNFOLLOW_SUCCESS = 'UNFOLLOW_SUCCESS';
 export const UNFOLLOW_FAILURE = 'UNFOLLOW_FAILURE';
 
+export const ADD_POST_TO_ME = 'ADD_POST_TO_ME';
+export const REMOVE_POST_OF_ME = 'REMOVE_POST_OF_ME';
+
 const dummyUser = (data) => ({
   ...data,
   nickname: 'supercoder',
   id: 1,
-  posts: [],
-  following: [],
-  followers: [],
+  posts: [{ id: 1 }],
+  following: [
+    { nickname: '울트라코더' },
+    { nickname: '자이언트코더' },
+    { nickname: '하이퍼코더' },
+    { nickname: '메가코더' },
+  ],
+  followers: [
+    { nickname: '울트라코더' },
+    { nickname: '자이언트코더' },
+    { nickname: '하이퍼코더' },
+    { nickname: '메가코더' },
+  ],
 });
 
 // LOG_IN
@@ -178,6 +191,24 @@ const reducer = (state = initialState, action) => {
         changeNicknameLoading: false,
         changeNicknameDone: true,
         changeNicknameError: null,
+      };
+
+    case ADD_POST_TO_ME:
+      return {
+        ...state,
+        me: {
+          ...state.me,
+          posts: [{ id: action.data }, ...state.me.posts],
+        },
+      };
+
+    case REMOVE_POST_OF_ME:
+      return {
+        ...state,
+        me: {
+          ...state.me,
+          posts: state.me.posts.filter((v) => v.id !== action.data),
+        },
       };
     default:
       return state;
