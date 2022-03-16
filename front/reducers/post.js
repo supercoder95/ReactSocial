@@ -98,7 +98,7 @@ const dummyComment = (data) => ({
     nickname: 'supercoder',
   },
 });
-// reducer -> 이전 상태를 액션을 통해 다음 상태로 만들어내는 함수(불변성은 지키면서)
+
 const reducer = (state = initialState, action) => {
   return produce(state, (draft) => {
     switch (action.type) {
@@ -153,7 +153,7 @@ const reducer = (state = initialState, action) => {
       //   removePostDone: false,
       // };
       case REMOVE_POST_SUCCESS:
-        draft.mainPosts = state.mainPosts.filter((v) => v.id !== action.data);
+        draft.mainPosts = draft.mainPosts.filter((v) => v.id !== action.data);
         draft.removePostLoading = false;
         draft.removePostError = null;
         draft.removePostDone = true;
@@ -189,9 +189,15 @@ const reducer = (state = initialState, action) => {
       //   addCommentError: null,
       //   addCommentDone: false,
       // };
-      case ADD_COMMENT_SUCCESS: {
-        draft.
-      //   const postIndex = state.mainPosts.findIndex(
+      case ADD_COMMENT_SUCCESS:
+        const post = draft.mainPosts.find((v) => v.id === action.data.postId);
+        post.Comments.unshift(dummyComment(action.data.content));
+        draft.addCommentLoading = false;
+        draft.addCommentError = null;
+        draft.addCommentDone = true;
+        break;
+      //   {
+      //     const postIndex = state.mainPosts.findIndex(
       //     (v) => v.id === action.data.postId
       //   );
       //   const post = { ...state.mainPosts[postIndex] };
@@ -208,14 +214,19 @@ const reducer = (state = initialState, action) => {
       //   };
       // }
       case ADD_COMMENT_FAILURE:
-        return {
-          ...state,
-          addCommentLoading: false,
-          addCommentError: action.error,
-          addCommentDone: false,
-        };
+        draft.addCommentLoading = false;
+        draft.addCommentError = action.error;
+        draft.addCommentDone = false;
+        break;
+      // return {
+      //   ...state,
+      //   addCommentLoading: false,
+      //   addCommentError: action.error,
+      //   addCommentDone: false,
+      // };
       default:
-        return state;
+        break;
+      // return state;
     }
   });
 };
