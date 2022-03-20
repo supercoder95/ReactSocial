@@ -14,6 +14,12 @@ export const initialState = {
   changeNicknameDone: false,
   changeNicknameError: null,
   me: null,
+  followLoading: false,
+  followDone: false,
+  followError: null,
+  unFollowLoading: false,
+  unFollowDone: false,
+  unFollowError: null,
   signUpData: {},
   loginData: {},
 };
@@ -129,24 +135,11 @@ const reducer = (state = initialState, action) => {
         draft.logOutError = null;
         draft.logOutDone = false;
         break;
-      // console.log('reducer logOut Request');
-      // return {
-      //   ...state,
-      //   logOutLoading: true,
-      //   logOutError: null,
-      //   logOutDone: false,
-      // };
 
       case LOG_OUT_FAILURE:
         draft.logInLoading = false;
         draft.logOutError = action.error;
         break;
-      // console.log('reducer LOG_OUT_FAILURE!!!!');
-      // return {
-      //   ...state,
-      //   logOutLoading: false,
-      //   logOutError: action.error,
-      // };
 
       case LOG_OUT_SUCCESS:
         draft.logOutLoading = false;
@@ -154,14 +147,6 @@ const reducer = (state = initialState, action) => {
         draft.logOutDone = true;
         draft.me = null;
         break;
-      // console.log('reducer logOut success');
-      // return {
-      //   ...state,
-      //   logOutLoading: false,
-      //   logOutError: null,
-      //   logOutDone: true,
-      //   me: null,
-      // };
 
       // SIGN_UP___
 
@@ -170,24 +155,11 @@ const reducer = (state = initialState, action) => {
         draft.signUpError = null;
         draft.signUpDone = false;
         break;
-      // console.log('reducer signUp Request');
-      // return {
-      //   ...state,
-      //   signUpLoading: true,
-      //   signUpError: null,
-      //   signUpDone: false,
-      // };
 
       case SIGN_UP_FAILURE:
         draft.signUpLoading = false;
         draft.signUpError = action.error;
         break;
-      // console.log('reducer SIGN_UP_FAILURE!!!!');
-      // return {
-      //   ...state,
-      //   signUpLoading: false,
-      //   signUpError: action.error,
-      // };
 
       case SIGN_UP_SUCCESS:
         draft.signUpLoading = false;
@@ -195,14 +167,45 @@ const reducer = (state = initialState, action) => {
         draft.signUpDone = true;
         draft.me = null;
         break;
-      // console.log('reducer signUp success');
-      // return {
-      //   ...state,
-      //   signUpLoading: false,
-      //   logOutDone: true,
-      //   logOutError: null,
-      //   me: null,
-      // };
+
+      // FOLLOW___
+
+      case FOLLOW_REQUEST:
+        draft.followLoading = true;
+        draft.followDone = false;
+        break;
+
+      case FOLLOW_FAILURE:
+        draft.followLoading = false;
+        draft.followError = action.error;
+        break;
+
+      case FOLLOW_SUCCESS:
+        draft.followLoading = false;
+        draft.followError = null;
+        draft.followDone = true;
+        draft.me.following.push({ id: action.data });
+        break;
+
+      case UNFOLLOW_REQUEST:
+        draft.unFollowLoading = true;
+        draft.unFollowError = null;
+        draft.unFollowDone = false;
+        draft.me.following = draft.me.following.filter(
+          (v) => v.id !== action.data
+        );
+        break;
+
+      case UNFOLLOW_FAILURE:
+        draft.unFollowLoading = false;
+        draft.unFollowError = action.error;
+        break;
+
+      case UNFOLLOW_SUCCESS:
+        draft.unFollowLoading = false;
+        draft.unFollowError = null;
+        draft.unFollowDone = true;
+        break;
 
       // CHANGE_NICKNAME___
 
@@ -257,13 +260,6 @@ const reducer = (state = initialState, action) => {
       case REMOVE_POST_OF_ME:
         draft.me.posts = draft.me.posts.filter((v) => v.id !== action.data);
         break;
-      // return {
-      //   ...state,
-      //   me: {
-      //     ...state.me,
-      //     posts: state.me.posts.filter((v) => v.id !== action.data),
-      //   },
-      // };
       default:
         break;
     }
