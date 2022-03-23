@@ -1,0 +1,24 @@
+{
+  "development": {
+    "username": "root",
+    "password": "supercoder8877",
+    "database": "react-social",
+    "host": "127.0.0.1",
+    "prot": "3306",
+    "dialect": "mysql"
+  },
+  "test": {
+    "username": "root",
+    "password": "supercoder8877",
+    "database": "react-social",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "root",
+    "password": "supercoder8877",
+    "database": "react-social",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  }
+}
