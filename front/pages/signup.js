@@ -1,6 +1,7 @@
 import AppLayout from '../components/AppLayout';
 import Head from 'next/head';
-import { useCallback, useState } from 'react';
+import Router from 'next/router';
+import { useCallback, useEffect, useState } from 'react';
 import { Checkbox, Form, Input, Button } from 'antd';
 import useInput from '../hooks/useInput';
 import styled from 'styled-components';
@@ -13,7 +14,20 @@ const ErrorMessage = styled.div`
 
 const Signup = () => {
   const dispatch = useDispatch();
-  const { signUpLoading } = useSelector((state) => state.user);
+  const { signUpLoading, signUpDone, signUpError } = useSelector(
+    (state) => state.user
+  );
+  useEffect(() => {
+    if (signUpDone) {
+      Router.push('/');
+    }
+  }, [signUpDone]);
+  useEffect(() => {
+    if (signUpError) {
+      alert(signUpError);
+    }
+  }, [signUpError]);
+
   const [email, onChangeEmail] = useInput('');
   const [nickname, onChangeNickname] = useInput('');
   const [password, onChangePassword] = useInput('');
@@ -44,7 +58,7 @@ const Signup = () => {
     }
     dispatch({
       type: SIGN_UP_REQUEST,
-      data: { email, password, passwordCheck, term },
+      data: { email, password, passwordCheck, nickname, term },
     });
   }, [email, password, passwordCheck, term]);
 

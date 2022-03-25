@@ -163,9 +163,7 @@ const reducer = (state = initialState, action) => {
 
       case SIGN_UP_SUCCESS:
         draft.signUpLoading = false;
-        draft.signUpError = null;
         draft.signUpDone = true;
-        draft.me = null;
         break;
 
       // FOLLOW___
