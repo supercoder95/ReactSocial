@@ -51,24 +51,24 @@ export const UNFOLLOW_FAILURE = 'UNFOLLOW_FAILURE';
 export const ADD_POST_TO_ME = 'ADD_POST_TO_ME';
 export const REMOVE_POST_OF_ME = 'REMOVE_POST_OF_ME';
 
-const dummyUser = (data) => ({
-  ...data,
-  nickname: 'supercoder',
-  id: 1,
-  posts: [{ id: 1 }],
-  following: [
-    { nickname: '울트라코더' },
-    { nickname: '자이언트코더' },
-    { nickname: '하이퍼코더' },
-    { nickname: '메가코더' },
-  ],
-  followers: [
-    { nickname: '울트라코더' },
-    { nickname: '자이언트코더' },
-    { nickname: '하이퍼코더' },
-    { nickname: '메가코더' },
-  ],
-});
+// const dummyUser = (data) => ({
+//   ...data,
+//   nickname: 'supercoder',
+//   id: 1,
+//   Posts: [{ id: 1 }],
+//   Followings: [
+//     { nickname: '울트라코더' },
+//     { nickname: '자이언트코더' },
+//     { nickname: '하이퍼코더' },
+//     { nickname: '메가코더' },
+//   ],
+//   Followers: [
+//     { nickname: '울트라코더' },
+//     { nickname: '자이언트코더' },
+//     { nickname: '하이퍼코더' },
+//     { nickname: '메가코더' },
+//   ],
+// });
 
 // LOG_IN
 export const loginRequestAction = (data) => {
@@ -109,17 +109,13 @@ const reducer = (state = initialState, action) => {
       case LOG_IN_FAILURE:
         draft.logInLoading = false;
         draft.logInDone = false;
+        draft.logInError = action.data;
         break;
-      // return {
-      //   ...state,
-      //   logInLoading: false,
-      //   logInDone: false,
-      // };
 
       case LOG_IN_SUCCESS:
         draft.logInLoading = false;
         draft.logInDone = true;
-        draft.me = dummyUser(action.data);
+        draft.me = action.data;
         break;
       // return {
       //   ...state,
@@ -182,14 +178,14 @@ const reducer = (state = initialState, action) => {
         draft.followLoading = false;
         draft.followError = null;
         draft.followDone = true;
-        draft.me.following.push({ id: action.data });
+        draft.me.Followings.push({ id: action.data });
         break;
 
       case UNFOLLOW_REQUEST:
         draft.unFollowLoading = true;
         draft.unFollowError = null;
         draft.unFollowDone = false;
-        draft.me.following = draft.me.following.filter(
+        draft.me.Followings = draft.me.Followings.filter(
           (v) => v.id !== action.data
         );
         break;
