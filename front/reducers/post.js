@@ -1,6 +1,4 @@
-import shortId from 'shortid';
 import produce from 'immer';
-import faker from 'faker';
 
 export const initialState = {
   mainPosts: [],
@@ -18,33 +16,13 @@ export const initialState = {
   addCommentLoading: false,
   addCommentDone: false,
   addCommentError: null,
+  likePostLoading: false,
+  likePostDone: false,
+  likePostError: null,
+  unLikePostLoading: false,
+  unLikePostDone: false,
+  unLikePostError: null,
 };
-
-export const generateDummyPost = (number) =>
-  Array(number)
-    .fill()
-    .map(() => ({
-      id: shortId.generate(),
-      User: {
-        id: shortId.generate(),
-        nickname: faker.name.findName(),
-      },
-      content: faker.lorem.paragraph(),
-      Images: [
-        {
-          src: faker.image.image(),
-        },
-      ],
-      Comments: [
-        {
-          User: {
-            id: shortId.generate(),
-            nickname: faker.name.findName(),
-          },
-          content: faker.lorem.sentence(),
-        },
-      ],
-    }));
 
 // ADD_POST___
 export const ADD_POST_REQUEST = 'ADD_POST_REQUEST';
@@ -63,6 +41,14 @@ export const ADD_COMMENT_REQUEST = 'ADD_COMMENT_REQUEST';
 export const ADD_COMMENT_SUCCESS = 'ADD_COMMENT_SUCCESS';
 export const ADD_COMMENT_FAILURE = 'ADD_COMMENT_FAILURE';
 
+export const LIKE_POST_REQUEST = 'LIKE_POST_REQUEST';
+export const LIKE_POST_SUCCESS = 'LIKE_POST_SUCCESS';
+export const LIKE_POST_FAILURE = 'LIKE_POST_FAILURE';
+
+export const UNLIKE_POST_REQUEST = 'UNLIKE_POST_REQUEST';
+export const UNLIKE_POST_SUCCESS = 'UNLIKE_POST_SUCCESS';
+export const UNLIKE_POST_FAILURE = 'UNLIKE_POST_FAILURE';
+
 // Input
 export const addPost = (data) => ({
   type: ADD_POST_REQUEST,
@@ -72,26 +58,6 @@ export const addPost = (data) => ({
 export const addComment = (data) => ({
   type: ADD_COMMENT_REQUEST,
   data,
-});
-
-const dummyPost = (data) => ({
-  id: data.id,
-  content: data.content,
-  User: {
-    id: 1,
-    nickname: 'supercoder',
-  },
-  Images: [],
-  Comments: [],
-});
-
-const dummyComment = (data) => ({
-  id: shortId.generate(),
-  content: data,
-  User: {
-    id: 1,
-    nickname: 'supercoder',
-  },
 });
 
 const reducer = (state = initialState, action) =>
@@ -109,7 +75,6 @@ const reducer = (state = initialState, action) =>
         draft.hasMorePosts = draft.mainPosts.length < 50;
         break;
       case LOAD_POSTS_FAILURE:
-        c;
         draft.loadPostLoading = false;
         draft.loadPostError = action.error;
         break;
@@ -122,7 +87,7 @@ const reducer = (state = initialState, action) =>
         draft.addPostError = null;
         break;
       case ADD_POST_SUCCESS:
-        draft.mainPosts.unshift(dummyPost(action.data));
+        draft.mainPosts.unshift(action.data);
         draft.addPostLoading = false;
         draft.addPostDone = true;
         draft.addPostError = null;
@@ -160,8 +125,8 @@ const reducer = (state = initialState, action) =>
         draft.addCommentDone = false;
         break;
       case ADD_COMMENT_SUCCESS:
-        const post = draft.mainPosts.find((v) => v.id === action.data.postId);
-        post.Comments.unshift(dummyComment(action.data.content));
+        const post = draft.mainPosts.find((v) => v.id === action.data.PostId);
+        post.Comments.unshift(action.data);
         draft.addCommentLoading = false;
         draft.addCommentError = null;
         draft.addCommentDone = true;
@@ -171,6 +136,42 @@ const reducer = (state = initialState, action) =>
         draft.addCommentLoading = false;
         draft.addCommentError = action.error;
         draft.addCommentDone = false;
+        break;
+
+      //LIKE_POST___
+      case LIKE_POST_REQUEST:
+        draft.likePostLoading = true;
+        draft.likePostError = null;
+        draft.likePostDone = false;
+        break;
+      case LIKE_POST_SUCCESS:
+        draft.likePostLoading = false;
+        draft.likePostError = null;
+        draft.likePostDone = true;
+        break;
+
+      case LIKE_POST_FAILURE:
+        draft.likePostLoading = false;
+        draft.likePostError = action.error;
+        draft.likePostDone = false;
+        break;
+
+      // UNLIKE_POST___
+      case UNLIKE_POST_REQUEST:
+        draft.unLikePostLoading = true;
+        draft.unLikePostError = null;
+        draft.unLikePostDone = false;
+        break;
+      case UNLIKE_POST_SUCCESS:
+        draft.unLikePostLoading = false;
+        draft.unLikePostError = null;
+        draft.unLikePostDone = true;
+        break;
+
+      case UNLIKE_POST_FAILURE:
+        draft.unLikePostLoading = false;
+        draft.unLikePostError = action.error;
+        draft.unLikePostDone = false;
         break;
 
       default:

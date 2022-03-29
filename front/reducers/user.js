@@ -1,6 +1,9 @@
 import produce from 'immer';
 
 export const initialState = {
+  loadMyInfoLoading: false,
+  loadMyInfoDone: false,
+  loadMyInfoError: null,
   logInLoading: false,
   logInDone: false,
   logInError: null,
@@ -47,28 +50,13 @@ export const FOLLOW_FAILURE = 'FOLLOW_FAILURE';
 export const UNFOLLOW_REQUEST = 'UNFOLLOW_REQUEST';
 export const UNFOLLOW_SUCCESS = 'UNFOLLOW_SUCCESS';
 export const UNFOLLOW_FAILURE = 'UNFOLLOW_FAILURE';
+// LOAD_USER
+export const LOAD_MY_INFO_REQUEST = 'LOAD_MY_INFO_REQUEST';
+export const LOAD_MY_INFO_SUCCESS = 'LOAD_MY_INFO_SUCCESS';
+export const LOAD_MY_INFO_FAILURE = 'LOAD_MY_INFO_FAILURE';
 
 export const ADD_POST_TO_ME = 'ADD_POST_TO_ME';
 export const REMOVE_POST_OF_ME = 'REMOVE_POST_OF_ME';
-
-// const dummyUser = (data) => ({
-//   ...data,
-//   nickname: 'supercoder',
-//   id: 1,
-//   Posts: [{ id: 1 }],
-//   Followings: [
-//     { nickname: '울트라코더' },
-//     { nickname: '자이언트코더' },
-//     { nickname: '하이퍼코더' },
-//     { nickname: '메가코더' },
-//   ],
-//   Followers: [
-//     { nickname: '울트라코더' },
-//     { nickname: '자이언트코더' },
-//     { nickname: '하이퍼코더' },
-//     { nickname: '메가코더' },
-//   ],
-// });
 
 // LOG_IN
 export const loginRequestAction = (data) => {
@@ -91,20 +79,30 @@ export const logoutRequestAction = (data) => {
 const reducer = (state = initialState, action) => {
   return produce(state, (draft) => {
     switch (action.type) {
-      // LOG_IN
+      // LOAD_MY_INFO
+      case LOAD_MY_INFO_REQUEST:
+        draft.loadMyInfoLoading = true;
+        draft.loadMyInfoError = null;
+        draft.loadMyInfoDone = false;
+        break;
 
+      case LOAD_MY_INFO_FAILURE:
+        draft.loadMyInfoLoading = false;
+        draft.loadMyInfoError = action.data;
+        break;
+
+      case LOAD_MY_INFO_SUCCESS:
+        draft.loadMyInfoLoading = false;
+        draft.loadMyInfoDone = true;
+        draft.me = action.data;
+        break;
+
+      // LOG_IN
       case LOG_IN_REQUEST:
         draft.logInLoading = true;
         draft.logInError = null;
         draft.logInDone = false;
         break;
-      // console.log('reducer login is running...');
-      // return {
-      //   ...state,
-      //   logInLoading: true,
-      //   logInError: null,
-      //   logInDone: false,
-      // };
 
       case LOG_IN_FAILURE:
         draft.logInLoading = false;
@@ -117,12 +115,6 @@ const reducer = (state = initialState, action) => {
         draft.logInDone = true;
         draft.me = action.data;
         break;
-      // return {
-      //   ...state,
-      //   logInLoading: false,
-      //   logInDone: true,
-      //   me: dummyUser(action.data),
-      // };
 
       // LOG_OUT
 

@@ -8,6 +8,8 @@ import { setContext } from 'redux-saga/effects';
 
 const CommentForm = ({ post }) => {
   const id = useSelector((state) => state.user.me?.id);
+  const dispatch = useDispatch();
+
   const { addCommentDone, addCommentLoading } = useSelector(
     (state) => state.post
   );
@@ -16,7 +18,7 @@ const CommentForm = ({ post }) => {
       setCommentText('');
     }
   }, [addCommentDone]);
-  const dispatch = useDispatch();
+
   const [commentText, onChangeCommentText, setCommentText] = useInput('');
   const onSubmitComment = useCallback(() => {
     dispatch({
@@ -24,6 +26,7 @@ const CommentForm = ({ post }) => {
       data: { content: commentText, postId: post.id, userId: id },
     });
   }, [commentText, id]);
+
   return (
     <Form onFinish={onSubmitComment}>
       <Form.Item>
