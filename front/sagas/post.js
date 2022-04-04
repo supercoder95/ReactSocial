@@ -21,9 +21,18 @@ import {
   LOAD_POSTS_SUCCESS,
   LOAD_POSTS_FAILURE,
   LIKE_POST_REQUEST,
+  LIKE_POST_SUCCESS,
+  LIKE_POST_FAILURE,
+  UNLIKE_POST_SUCCESS,
+  UNLIKE_POST_FAILURE,
+  UNLIKE_POST_REQUEST,
 } from '../reducers/post';
 import axios from 'axios';
-import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from '../reducers/user';
+import {
+  ADD_POST_TO_ME,
+  REMOVE_POST_OF_ME,
+  UNFOLLOW_REQUEST,
+} from '../reducers/user';
 
 // addPost
 function addPostAPI(data) {
@@ -72,17 +81,15 @@ function* loadPosts(action) {
 
 // removePost
 function removePostAPI(data) {
-  return axios.post('/api/Post', data);
+  return axios.delete(`/post/${data}`);
 }
 
 function* removePost(action) {
   try {
-    // const result = yield call(addPostAPI, action.data);
-    yield delay(1000);
-    console.log('saga removePost success....');
+    const result = yield call(removePostAPI, action.data);
     yield put({
       type: REMOVE_POST_SUCCESS,
-      data: action.data,
+      data: result.data,
     });
     yield put({
       type: REMOVE_POST_OF_ME,
@@ -91,6 +98,46 @@ function* removePost(action) {
   } catch (err) {
     yield put({
       type: REMOVE_POST_FAILURE,
+      data: err.response.data,
+    });
+  }
+}
+
+// likePost
+function likePostAPI(data) {
+  return axios.patch(`/post/${data}/like`);
+}
+
+function* likePost(action) {
+  try {
+    const result = yield call(likePostAPI, action.data);
+    yield put({
+      type: LIKE_POST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: LIKE_POST_FAILURE,
+      data: err.response.data,
+    });
+  }
+}
+
+// removePost
+function unLikePostAPI(data) {
+  return axios.delete(`/post/${data}/like`);
+}
+
+function* unLikePost(action) {
+  try {
+    const result = yield call(unLikePostAPI, action.data);
+    yield put({
+      type: UNLIKE_POST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: UNLIKE_POST_FAILURE,
       data: err.response.data,
     });
   }
@@ -137,7 +184,11 @@ function* watchLoadPosts() {
 }
 
 function* watchLikePosts() {
-  yield takeLatest(5000, LIKE_POST_REQUEST, loadPosts);
+  yield takeLatest(LIKE_POST_REQUEST, likePost);
+}
+
+function* watchUnLikePosts() {
+  yield takeLatest(UNLIKE_POST_REQUEST, unLikePost);
 }
 
 export default function* postSaga() {
@@ -146,5 +197,7 @@ export default function* postSaga() {
     fork(watchAddPost),
     fork(watchAddComment),
     fork(watchRemovePost),
+    fork(watchLikePosts),
+    fork(watchUnLikePosts),
   ]);
 }

@@ -67,7 +67,6 @@ export const loginRequestAction = (data) => {
 };
 
 // LOG_OUT
-
 export const logoutRequestAction = (data) => {
   return {
     type: LOG_OUT_REQUEST,
@@ -75,11 +74,10 @@ export const logoutRequestAction = (data) => {
 };
 
 // Reducer
-
 const reducer = (state = initialState, action) => {
   return produce(state, (draft) => {
     switch (action.type) {
-      // LOAD_MY_INFO
+      // LOAD_MY_INFO___
       case LOAD_MY_INFO_REQUEST:
         draft.loadMyInfoLoading = true;
         draft.loadMyInfoError = null;
@@ -97,7 +95,7 @@ const reducer = (state = initialState, action) => {
         draft.me = action.data;
         break;
 
-      // LOG_IN
+      // LOG_IN___
       case LOG_IN_REQUEST:
         draft.logInLoading = true;
         draft.logInError = null;
@@ -116,8 +114,7 @@ const reducer = (state = initialState, action) => {
         draft.me = action.data;
         break;
 
-      // LOG_OUT
-
+      // LOG_OUT___
       case LOG_OUT_REQUEST:
         draft.logOutLoading = true;
         draft.logOutError = null;
@@ -137,7 +134,6 @@ const reducer = (state = initialState, action) => {
         break;
 
       // SIGN_UP___
-
       case SIGN_UP_REQUEST:
         draft.signUpLoading = true;
         draft.signUpError = null;
@@ -155,7 +151,6 @@ const reducer = (state = initialState, action) => {
         break;
 
       // FOLLOW___
-
       case FOLLOW_REQUEST:
         draft.followLoading = true;
         draft.followDone = false;
@@ -173,6 +168,7 @@ const reducer = (state = initialState, action) => {
         draft.me.Followings.push({ id: action.data });
         break;
 
+      // UNFOLLOW___
       case UNFOLLOW_REQUEST:
         draft.unFollowLoading = true;
         draft.unFollowError = null;
@@ -194,7 +190,6 @@ const reducer = (state = initialState, action) => {
         break;
 
       // CHANGE_NICKNAME___
-
       case CHANGE_NICKNAME_REQUEST:
         draft.changeNicknameLoading = true;
         draft.changeNicknameError = null;
@@ -212,37 +207,18 @@ const reducer = (state = initialState, action) => {
         draft.changeNicknameError = action.error;
         draft.changeNicknameDone = false;
         break;
-      // console.log('reducer CHANGE_NICKNAME_FAILURE!!!!');
-      // return {
-      //   ...state,
-      //   changeNicknameLoading: false,
-      //   changeNicknameError: action.error,
-      // };
 
       case CHANGE_NICKNAME_SUCCESS:
+        draft.me.nickname = action.draft.nickname;
         draft.changeNicknameLoading = false;
-        draft.changeNicknameError = null;
         draft.changeNicknameDone = true;
         break;
-      // console.log('reducer signUp success');
-      // return {
-      //   ...state,
-      //   changeNicknameLoading: false,
-      //   changeNicknameDone: true,
-      //   changeNicknameError: null,
-      // };
 
+      //  ADD_POST_TO_ME___
       case ADD_POST_TO_ME:
         draft.me.posts.unshift({ id: action.data });
         break;
-      // return {
-      //   ...state,
-      //   me: {
-      //     ...state.me,
-      //     posts: [{ id: action.data }, ...state.me.posts],
-      //   },
-      // };
-
+      // REMOVE_POST_OF_ME___
       case REMOVE_POST_OF_ME:
         draft.me.posts = draft.me.posts.filter((v) => v.id !== action.data);
         break;

@@ -28,6 +28,11 @@ router.get('/', async (req, res, next) => {
             },
           ],
         },
+        {
+          model: User, // 좋아요 누른 유저
+          as: 'Likers',
+          attributes: ['id'],
+        },
       ],
     });
     console.log(posts);

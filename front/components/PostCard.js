@@ -12,12 +12,15 @@ import PostImages from './PostImages';
 import PostCardContent from './PostCardContent';
 import { useCallback, useState } from 'react';
 import CommentForm from './CommentForm';
-import { REMOVE_POST_REQUEST } from '../reducers/post';
+import {
+  LIKE_POST_REQUEST,
+  REMOVE_POST_REQUEST,
+  UNLIKE_POST_REQUEST,
+} from '../reducers/post';
 import FollowButton from './FollowButton';
 
 const PostCard = ({ post }) => {
   const dispatch = useDispatch();
-  const [liked, setLiked] = useState(false);
   const [commnetFormOpened, setCommentFormOpened] = useState(false);
   const { removePostLoading } = useSelector((state) => state.post);
   const onLike = useCallback(() => {
@@ -35,6 +38,7 @@ const PostCard = ({ post }) => {
   const onToggleComment = useCallback(() => {
     setCommentFormOpened((prev) => !prev);
   }, []);
+
   const id = useSelector((state) => state.user.me?.id);
   const onRemovePost = useCallback(() => {
     dispatch({
@@ -42,6 +46,8 @@ const PostCard = ({ post }) => {
       data: post.id,
     });
   }, []);
+
+  const liked = post.Likers.find((v) => v.id === id);
 
   return (
     <div style={{ marginBottom: 20 }}>
@@ -123,6 +129,7 @@ PostCard.propType = {
     createdAt: PropTypes.string,
     Comments: PropTypes.arrayOf(PropTypes.object),
     Images: PropTypes.arrayOf(PropTypes.object),
+    Likers: PropTypes.arrayOf(PropTypes.object),
   }).isRequired,
 };
 
