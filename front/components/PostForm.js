@@ -22,6 +22,9 @@ const PostForm = () => {
   const [text, onChangeText, setText] = useInput('');
 
   const onSubmit = useCallback(() => {
+    if (!text || !text.trim()) {
+      return alert('게시글을 작성해주세요.');
+    }
     dispatch(addPost(text));
   }, [text]);
 

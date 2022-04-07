@@ -9,7 +9,7 @@ import { LOAD_MY_INFO_REQUEST } from '../reducers/user';
 
 const Home = () => {
   const dispatch = useDispatch();
-  const [ref, inView] = useInView();
+  // const [ref, inView] = useInView();
   const { me } = useSelector((state) => state.user);
   const { mainPosts, hasMorePosts, loadPostLoading } = useSelector(
     (state) => state.post
@@ -24,15 +24,15 @@ const Home = () => {
     });
   }, []);
 
-  useEffect(() => {
-    if (inView && hasMorePosts && !loadPostLoading) {
-      const lastId = mainPosts[mainPosts.length - 1]?.id;
-      dispatch({
-        type: LOAD_POSTS_REQUEST,
-        lastId,
-      });
-    }
-  }, [inView, hasMorePosts, loadPostLoading, mainPosts]);
+  // useEffect(() => {
+  //   if (inView && hasMorePosts && !loadPostLoading) {
+  //     const lastId = mainPosts[mainPosts.length - 1]?.id;
+  //     dispatch({
+  //       type: LOAD_POSTS_REQUEST,
+  //       lastId,
+  //     });
+  //   }
+  // }, [inView, hasMorePosts, loadPostLoading, mainPosts]);
 
   return (
     <AppLayout>
@@ -40,7 +40,7 @@ const Home = () => {
       {mainPosts.map((post) => (
         <PostCard key={post.id} post={post} />
       ))}
-      <div ref={hasMorePosts && !loadPostLoading ? ref : undefined} />
+      {/* <div ref={hasMorePosts && !loadPostLoading ? ref : undefined} /> */}
     </AppLayout>
   );
 };

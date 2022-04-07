@@ -14,11 +14,11 @@ router.post('/', isLoggedIn, async (req, res, next) => {
       where: { id: post.id },
       include: [
         {
-          model: User, // 작성자
-          attributes: ['id', 'nickname'],
+          model: Image,
         },
         {
-          model: Image,
+          model: User, // 작성자
+          attributes: ['id', 'nickname'],
         },
         {
           model: Comment, // 댓글작성자
@@ -112,12 +112,11 @@ router.delete('/:postId', isLoggedIn, async (req, res, next) => {
         UserId: req.user.id,
       },
     });
-    res.json({ PostId: req.params.postId });
+    res.json({ PostId: parseInt(req.params.postId, 10) });
   } catch (error) {
     console.error(error);
     next(error);
   }
-  res.json({ id: 1 });
 });
 
 module.exports = router;

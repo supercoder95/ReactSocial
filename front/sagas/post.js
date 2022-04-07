@@ -1,12 +1,5 @@
-import {
-  all,
-  fork,
-  delay,
-  put,
-  takeLatest,
-  throttle,
-  call,
-} from 'redux-saga/effects';
+import axios from 'axios';
+import { all, fork, put, takeLatest, throttle, call } from 'redux-saga/effects';
 import {
   ADD_POST_REQUEST,
   ADD_POST_SUCCESS,
@@ -27,7 +20,6 @@ import {
   UNLIKE_POST_FAILURE,
   UNLIKE_POST_REQUEST,
 } from '../reducers/post';
-import axios from 'axios';
 import {
   ADD_POST_TO_ME,
   REMOVE_POST_OF_ME,
@@ -51,9 +43,10 @@ function* addPost(action) {
       data: result.data.id,
     });
   } catch (err) {
+    console.error(err);
     yield put({
       type: ADD_POST_FAILURE,
-      data: err.response.data,
+      error: err.response.data,
     });
   }
 }

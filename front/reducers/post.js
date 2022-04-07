@@ -81,7 +81,6 @@ const reducer = (state = initialState, action) =>
 
       // ADD_POST___
       case ADD_POST_REQUEST:
-        // added immer
         draft.addPostLoading = true;
         draft.addPostDone = false;
         draft.addPostError = null;
@@ -90,7 +89,6 @@ const reducer = (state = initialState, action) =>
         draft.mainPosts.unshift(action.data);
         draft.addPostLoading = false;
         draft.addPostDone = true;
-        draft.addPostError = null;
         break;
       case ADD_POST_FAILURE:
         draft.addPostLoading = false;
