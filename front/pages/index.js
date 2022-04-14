@@ -11,9 +11,14 @@ const Home = () => {
   const dispatch = useDispatch();
   // const [ref, inView] = useInView();
   const { me } = useSelector((state) => state.user);
-  const { mainPosts, hasMorePosts, loadPostLoading } = useSelector(
-    (state) => state.post
-  );
+  const { mainPosts, retweetError } = useSelector((state) => state.post);
+
+  // 리트윗 에러 알람
+  useEffect(() => {
+    if (retweetError) {
+      alert(retweetError);
+    }
+  }, [retweetError]);
 
   useEffect(() => {
     dispatch({

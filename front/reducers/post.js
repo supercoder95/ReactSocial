@@ -1,4 +1,4 @@
-import produce from 'immer';
+import produce from '../util/produce';
 
 export const initialState = {
   mainPosts: [],
@@ -22,6 +22,12 @@ export const initialState = {
   unLikePostLoading: false,
   unLikePostDone: false,
   unLikePostError: null,
+  imagesUploadLoading: false,
+  imagesUploadDone: false,
+  imagesUploadError: null,
+  retweetLoading: false,
+  retweetDone: false,
+  retweetError: null,
 };
 
 // ADD_POST___
@@ -49,7 +55,16 @@ export const UNLIKE_POST_REQUEST = 'UNLIKE_POST_REQUEST';
 export const UNLIKE_POST_SUCCESS = 'UNLIKE_POST_SUCCESS';
 export const UNLIKE_POST_FAILURE = 'UNLIKE_POST_FAILURE';
 
-// Input
+export const UPLOAD_IMAGES_REQUEST = 'UPLOAD_IMAGES_REQUEST';
+export const UPLOAD_IMAGES_SUCCESS = 'UPLOAD_IMAGES_SUCCESS';
+export const UPLOAD_IMAGES_FAILURE = 'UPLOAD_IMAGES_FAILURE';
+
+export const RETWEET_REQUEST = 'RETWEET_REQUEST';
+export const RETWEET_SUCCESS = 'RETWEET_SUCCESS';
+export const RETWEET_FAILURE = 'RETWEET_FAILURE';
+
+export const REMOVE_IMAGE = 'REMOVE_IMAGE';
+
 export const addPost = (data) => ({
   type: ADD_POST_REQUEST,
   data,
@@ -63,6 +78,9 @@ export const addComment = (data) => ({
 const reducer = (state = initialState, action) =>
   produce(state, (draft) => {
     switch (action.type) {
+      case REMOVE_IMAGE:
+        draft.imagePaths = draft.imagePaths.filter((v, i) => i !== action.data);
+        break;
       case LOAD_POSTS_REQUEST:
         draft.loadPostLoading = true;
         draft.loadPostDone = false;
@@ -71,8 +89,10 @@ const reducer = (state = initialState, action) =>
       case LOAD_POSTS_SUCCESS:
         draft.loadPostLoading = false;
         draft.loadPostDone = true;
-        draft.mainPosts = action.data.concat(draft.mainPosts);
+        // draft.mainPosts = action.data.concat(draft.mainPosts);
+        draft.mainPosts = draft.mainPosts.concat(action.data);
         draft.hasMorePosts = draft.mainPosts.length < 50;
+        // draft.hasMorePosts = draft.mainPosts.length === 10;
         break;
       case LOAD_POSTS_FAILURE:
         draft.loadPostLoading = false;
@@ -86,13 +106,13 @@ const reducer = (state = initialState, action) =>
         draft.addPostError = null;
         break;
       case ADD_POST_SUCCESS:
-        draft.mainPosts.unshift(action.data);
         draft.addPostLoading = false;
         draft.addPostDone = true;
+        draft.mainPosts.unshift(action.data);
+        draft.imagePaths = [];
         break;
       case ADD_POST_FAILURE:
         draft.addPostLoading = false;
-        draft.addPostDone = false;
         draft.addPostError = action.error;
         break;
 
@@ -124,6 +144,7 @@ const reducer = (state = initialState, action) =>
         draft.addCommentError = null;
         draft.addCommentDone = false;
         break;
+
       case ADD_COMMENT_SUCCESS:
         const post = draft.mainPosts.find((v) => v.id === action.data.PostId);
         post.Comments.unshift(action.data);
@@ -153,7 +174,6 @@ const reducer = (state = initialState, action) =>
         draft.likePostDone = true;
         break;
       }
-
       case LIKE_POST_FAILURE:
         draft.likePostLoading = false;
         draft.likePostError = action.error;
@@ -178,6 +198,41 @@ const reducer = (state = initialState, action) =>
         draft.unLikePostLoading = false;
         draft.unLikePostError = action.error;
         draft.unLikePostDone = false;
+        break;
+
+      //RETWEET___
+      case RETWEET_REQUEST:
+        draft.rewtweetLoading = true;
+        draft.retweetError = null;
+        draft.rewtweetDone = false;
+        break;
+      case RETWEET_SUCCESS: {
+        draft.mainPosts.unshift(action.data);
+        draft.rewtweetLoading = false;
+        draft.rewtweetDone = true;
+        break;
+      }
+      case RETWEET_FAILURE:
+        draft.rewtweetLoading = false;
+        draft.retweetError = action.error;
+        break;
+
+      // UPLOAD_IMAGES
+      case UPLOAD_IMAGES_REQUEST:
+        draft.imagesUploadLoading = true;
+        draft.imagesUploadError = null;
+        draft.imagesUploadDone = false;
+        break;
+      case UPLOAD_IMAGES_SUCCESS: {
+        draft.imagePaths = action.data;
+        draft.imagesUploadLoading = false;
+        draft.imagesUploadDone = true;
+        break;
+      }
+      case UPLOAD_IMAGES_FAILURE:
+        draft.imagesUploadLoading = false;
+        draft.imagesUploadError = action.error;
+        draft.imagesUploadDone = false;
         break;
 
       default:
