@@ -3,13 +3,17 @@ import produce from '../util/produce';
 export const initialState = {
   mainPosts: [],
   imagePaths: [],
+  singlePost: null,
   hasMorePosts: true,
-  loadPostLoading: false,
-  loadPostDone: false,
-  loadPostError: null,
+  loadPostsLoading: false,
+  loadPostsDone: false,
+  loadPostsError: null,
   addPostLoading: false,
   addPostDone: false,
   addPostError: null,
+  loadPostLoading: false,
+  loadPostDone: false,
+  loadPostError: null,
   removePostLoading: false,
   removePostDone: false,
   removePostError: null,
@@ -42,6 +46,10 @@ export const LOAD_POSTS_FAILURE = 'LOAD_POSTS_FAILURE';
 export const REMOVE_POST_REQUEST = 'REMOVE_POST_REQUEST';
 export const REMOVE_POST_SUCCESS = 'REMOVE_POST_SUCCESS';
 export const REMOVE_POST_FAILURE = 'REMOVE_POST_FAILURE';
+
+export const LOAD_POST_REQUEST = 'LOAD_POST_REQUEST';
+export const LOAD_POST_SUCCESS = 'LOAD_POST_SUCCESS';
+export const LOAD_POST_FAILURE = 'LOAD_POST_FAILURE';
 
 export const ADD_COMMENT_REQUEST = 'ADD_COMMENT_REQUEST';
 export const ADD_COMMENT_SUCCESS = 'ADD_COMMENT_SUCCESS';
@@ -81,20 +89,37 @@ const reducer = (state = initialState, action) =>
       case REMOVE_IMAGE:
         draft.imagePaths = draft.imagePaths.filter((v, i) => i !== action.data);
         break;
+
       case LOAD_POSTS_REQUEST:
-        draft.loadPostLoading = true;
-        draft.loadPostDone = false;
-        draft.loadPostError = null;
+        draft.loadPostsLoading = true;
+        draft.loadPostsDone = false;
+        draft.loadPostsError = null;
         break;
       case LOAD_POSTS_SUCCESS:
-        draft.loadPostLoading = false;
-        draft.loadPostDone = true;
+        draft.loadPostsLoading = false;
+        draft.loadPostsDone = true;
         // draft.mainPosts = action.data.concat(draft.mainPosts);
         draft.mainPosts = draft.mainPosts.concat(action.data);
         draft.hasMorePosts = draft.mainPosts.length < 50;
         // draft.hasMorePosts = draft.mainPosts.length === 10;
         break;
       case LOAD_POSTS_FAILURE:
+        draft.loadPostsLoading = false;
+        draft.loadPostsError = action.error;
+        break;
+      // LOAD_POST___
+      case LOAD_POST_REQUEST:
+        draft.loadPostLoading = true;
+        draft.loadPostDone = false;
+        draft.loadPostError = null;
+        break;
+      case LOAD_POST_SUCCESS:
+        console.log('LOAD_POST_SUCCESS');
+        draft.loadPostLoading = false;
+        draft.singlePost = action.data;
+        draft.loadPostDone = true;
+        break;
+      case LOAD_POST_FAILURE:
         draft.loadPostLoading = false;
         draft.loadPostError = action.error;
         break;

@@ -138,12 +138,37 @@ router.post(
 );
 
 router.get('/:postId', async (req, res, next) => {
+  // GET /post/1
   try {
     const post = await Post.findOne({
       where: { id: req.params.postId },
+    });
+    if (!post) {
+      return res.status(404).send('존재하지 않는 게시글입니다.');
+    }
+    const fullPost = await Post.findOne({
+      where: { id: post.id },
       include: [
         {
+          model: Post,
+          as: 'Retweet',
+          include: [
+            {
+              model: User,
+              attributes: ['id', 'nickname'],
+            },
+            {
+              model: Image,
+            },
+          ],
+        },
+        {
           model: User,
+          attributes: ['id', 'nickname'],
+        },
+        {
+          model: User,
+          as: 'Likers',
           attributes: ['id', 'nickname'],
         },
         {
@@ -155,18 +180,12 @@ router.get('/:postId', async (req, res, next) => {
             {
               model: User,
               attributes: ['id', 'nickname'],
-              order: [['createdAt', 'DESC']],
             },
           ],
         },
-        {
-          model: User, // 좋아요 누른 사람
-          as: 'Likers',
-          attributes: ['id'],
-        },
       ],
     });
-    res.status(200).json(post);
+    res.status(200).json(fullPost);
   } catch (error) {
     console.error(error);
     next(error);

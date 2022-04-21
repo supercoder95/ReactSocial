@@ -1,5 +1,13 @@
 import axios from 'axios';
-import { all, fork, put, takeLatest, throttle, call } from 'redux-saga/effects';
+import {
+  all,
+  fork,
+  put,
+  takeLatest,
+  throttle,
+  call,
+  take,
+} from 'redux-saga/effects';
 import {
   ADD_POST_REQUEST,
   ADD_POST_SUCCESS,
@@ -25,6 +33,9 @@ import {
   RETWEET_REQUEST,
   RETWEET_SUCCESS,
   RETWEET_FAILURE,
+  LOAD_POST_SUCCESS,
+  LOAD_POST_FAILURE,
+  LOAD_POST_REQUEST,
 } from '../reducers/post';
 import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from '../reducers/user';
 
@@ -52,14 +63,15 @@ function* addPost(action) {
   }
 }
 
-// loadPost
-function loadPostAPI(data) {
-  return axios.get('/posts', data);
+// LOAD_POST'S'___
+function loadPostUserAPI(lastId) {
+  // return axios.get('/posts', data);
+  return axios.get(`/posts?lastId=${lastId || 0}`);
 }
 
 function* loadPosts(action) {
   try {
-    const result = yield call(loadPostAPI, action.data);
+    const result = yield call(loadPostUserAPI, action.data);
     yield put({
       type: LOAD_POSTS_SUCCESS,
       data: result.data,
@@ -68,6 +80,28 @@ function* loadPosts(action) {
     console.error(err);
     yield put({
       type: LOAD_POSTS_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// LOAD_POST___
+
+function loadPostAPI(data) {
+  return axios.get(`/post/${data}`);
+}
+
+function* loadPost(action) {
+  try {
+    const result = yield call(loadPostAPI, action.data);
+    yield put({
+      type: LOAD_POST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LOAD_POST_FAILURE,
       error: err.response.data,
     });
   }
@@ -219,6 +253,10 @@ function* watchLoadPosts() {
   yield takeLatest(LOAD_POSTS_REQUEST, loadPosts);
 }
 
+function* watchLoadPost() {
+  yield takeLatest(LOAD_POST_REQUEST, loadPost);
+}
+
 function* watchLikePosts() {
   yield takeLatest(LIKE_POST_REQUEST, likePost);
 }
@@ -238,6 +276,7 @@ function* watchRetweet() {
 export default function* postSaga() {
   yield all([
     fork(watchLoadPosts),
+    fork(watchLoadPost),
     fork(watchAddPost),
     fork(watchAddComment),
     fork(watchRemovePost),
