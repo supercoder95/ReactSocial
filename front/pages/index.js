@@ -29,15 +29,6 @@ const Home = () => {
     }
   }, [retweetError]);
 
-  useEffect(() => {
-    dispatch({
-      type: LOAD_MY_INFO_REQUEST,
-    });
-    dispatch({
-      type: LOAD_POSTS_REQUEST,
-    });
-  }, []);
-
   // 방식 1번
   // useEffect(() => {
   //   if (inView && hasMorePosts && !loadPostLoading) {

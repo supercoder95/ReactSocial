@@ -3,7 +3,6 @@ import { useCallback, useRef, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useInput from '../hooks/useInput';
 import {
-  addPost,
   ADD_POST_REQUEST,
   REMOVE_IMAGE,
   UPLOAD_IMAGES_REQUEST,
@@ -12,6 +11,7 @@ import {
 const PostForm = () => {
   const dispatch = useDispatch();
   const { imagePaths, addPostDone } = useSelector((state) => state.post);
+  const [text, onChangeText, setText] = useInput('');
 
   useEffect(() => {
     if (addPostDone) {
@@ -23,8 +23,6 @@ const PostForm = () => {
   const onClickImageUpload = useCallback(() => {
     imageInput.current.click();
   }, [imageInput.currnet]);
-
-  const [text, onChangeText, setText] = useInput('');
 
   const onSubmit = useCallback(() => {
     if (!text || !text.trim()) {
