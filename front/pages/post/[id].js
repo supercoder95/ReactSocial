@@ -30,11 +30,7 @@ const Post = () => {
         <meta property="og:description" content={singlePost.content} />
         <meta
           property="og:image"
-          content={
-            singlePost.Images[0]
-              ? singlePost.Images[0].src
-              : 'https://supercoder.com/favicon.ico'
-          }
+          content={singlePost.Images[0] ? singlePost.Images[0].src : ''}
         />
         <meta property="og:url" content={`https://supercoder.com/post/${id}`} />
       </Head>

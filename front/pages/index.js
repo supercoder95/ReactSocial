@@ -14,9 +14,13 @@ import wrapper from '../store/configureStore';
 
 const Home = () => {
   const dispatch = useDispatch();
+  // 방식 1번
   // const [ref, inView] = useInView();
-  const { me } = useSelector((state) => state.user);
-  const { mainPosts, retweetError } = useSelector((state) => state.post);
+  const me = useSelector((state) => state.user.me);
+  const mainPosts = useSelector((state) => state.post.mainPosts);
+  const { retweetError, hasMorePosts, loadPostsLoading } = useSelector(
+    (state) => state.post
+  );
 
   // 리트윗 에러 알람
   useEffect(() => {
@@ -25,15 +29,16 @@ const Home = () => {
     }
   }, [retweetError]);
 
-  // useEffect(() => {
-  //   dispatch({
-  //     type: LOAD_MY_INFO_REQUEST,
-  //   });
-  //   dispatch({
-  //     type: LOAD_POSTS_REQUEST,
-  //   });
-  // }, []);
+  useEffect(() => {
+    dispatch({
+      type: LOAD_MY_INFO_REQUEST,
+    });
+    dispatch({
+      type: LOAD_POSTS_REQUEST,
+    });
+  }, []);
 
+  // 방식 1번
   // useEffect(() => {
   //   if (inView && hasMorePosts && !loadPostLoading) {
   //     const lastId = mainPosts[mainPosts.length - 1]?.id;
@@ -43,6 +48,28 @@ const Home = () => {
   //     });
   //   }
   // }, [inView, hasMorePosts, loadPostLoading, mainPosts]);
+
+  // 방식 2번
+  useEffect(() => {
+    function onScroll() {
+      if (
+        window.pageYOffset + document.documentElement.clientHeight >
+        document.documentElement.scrollHeight - 300
+      ) {
+        if (hasMorePosts && !loadPostsLoading) {
+          const lastId = mainPosts[mainPosts.length - 1]?.id;
+          dispatch({
+            type: LOAD_POSTS_REQUEST,
+            lastId,
+          });
+        }
+      }
+    }
+    window.addEventListener('scroll', onScroll);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+    };
+  }, [hasMorePosts, loadPostsLoading, mainPosts]);
 
   return (
     <AppLayout>

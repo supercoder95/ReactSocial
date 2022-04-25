@@ -19,7 +19,6 @@ export const initialState = {
   changeNicknameLoading: false,
   changeNicknameDone: false,
   changeNicknameError: null,
-  me: null,
   removeFollowerLoading: false,
   removeFollowerDone: false,
   removeFollowerError: null,
@@ -35,6 +34,7 @@ export const initialState = {
   unFollowLoading: false,
   unFollowDone: false,
   unFollowError: null,
+  me: null,
   userInfo: null,
 };
 // LOG_IN___

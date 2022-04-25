@@ -1,13 +1,16 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const passport = require('passport');
-const { User, Post } = require('../models');
+const { Op } = require('sequelize');
+
+const { User, Post, Image, Comment } = require('../models');
 
 const { isLoggedIn, isNotLoggedIn } = require('./middlewares');
 
 const router = express.Router();
 
 router.get('/', async (req, res, next) => {
+  // GET /user
   try {
     if (req.user) {
       const fullUserWithoutPassword = await User.findOne({
@@ -42,7 +45,64 @@ router.get('/', async (req, res, next) => {
   }
 });
 
+router.get('/:userId/posts', async (req, res, next) => {
+  // GET /user/1/posts
+  try {
+    const where = { UserId: req.params.userId };
+    if (parseInt(req.query.lastId, 10)) {
+      // 초기 로딩이 아닐 때
+      where.id = { [Op.lt]: parseInt(req.query.lastId, 10) };
+    }
+    const posts = await Post.findAll({
+      where,
+      limit: 10,
+      order: [['createdAt', 'DESC']],
+      include: [
+        {
+          model: User,
+          attributes: ['id', 'nickname'],
+        },
+        {
+          model: Image,
+        },
+        {
+          model: Comment,
+          include: [
+            {
+              model: User,
+              attributes: ['id', 'nickname'],
+            },
+          ],
+        },
+        {
+          model: User, // 좋아요 누른 유저
+          as: 'Likers',
+          attributes: ['id'],
+        },
+        {
+          model: Post,
+          as: 'Retweet',
+          include: [
+            {
+              model: User,
+              attributes: ['id', 'nickname'],
+            },
+            {
+              model: Image,
+            },
+          ],
+        },
+      ],
+    });
+    res.status(200).json(posts);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
 router.get('/:userId', async (req, res, next) => {
+  // GET /user/1
   try {
     const fullUserWithoutPassword = await User.findOne({
       where: { id: req.params.userId },
@@ -68,11 +128,10 @@ router.get('/:userId', async (req, res, next) => {
     });
     if (fullUserWithoutPassword) {
       const data = fullUserWithoutPassword.toJSON();
-      // 개인정보 침해 예방
-      data.Posts = data.Posts.length;
+      data.Posts = data.Posts.length; // 개인정보 침해 예방
       data.Followers = data.Followers.length;
       data.Followings = data.Followings.length;
-      res.status(200).json(fullUserWithoutPassword);
+      res.status(200).json(data);
     } else {
       res.status(404).json('존재하지 않는 사용자입니다.');
     }
