@@ -1,13 +1,5 @@
 import axios from 'axios';
-import {
-  all,
-  fork,
-  put,
-  takeLatest,
-  throttle,
-  call,
-  take,
-} from 'redux-saga/effects';
+import { all, fork, put, takeLatest, throttle, call } from 'redux-saga/effects';
 import {
   ADD_POST_REQUEST,
   ADD_POST_SUCCESS,

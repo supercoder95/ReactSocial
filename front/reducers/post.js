@@ -143,7 +143,6 @@ const reducer = (state = initialState, action) =>
         draft.loadPostError = action.error;
         break;
 
-      // ADD_POST___
       case ADD_POST_REQUEST:
         draft.addPostLoading = true;
         draft.addPostDone = false;
@@ -294,7 +293,6 @@ const reducer = (state = initialState, action) =>
         draft.imagesUploadError = action.error;
         draft.imagesUploadDone = false;
         break;
-
       default:
         break;
     }

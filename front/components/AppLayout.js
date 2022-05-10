@@ -1,8 +1,8 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import Link from 'next/link';
-import { Col, Input, Menu, Row } from 'antd';
-import { useSelector } from 'react-redux';
+import { Button, Col, Input, Menu, Row } from 'antd';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { createGlobalStyle } from 'styled-components';
 
@@ -10,9 +10,11 @@ import UserProfile from '../components/UserProfile';
 import LoginForm from '../components/LoginForm';
 import useInput from '../hooks/useInput';
 import Router from 'next/router';
+import { logoutRequestAction } from '../reducers/user';
 
 const SearchInput = styled(Input.Search)`
   vertical-align: middle;
+  
 `;
 
 const Global = createGlobalStyle`
@@ -32,7 +34,13 @@ const Global = createGlobalStyle`
 
 const AppLayout = ({ children }) => {
   const [searchInput, onChangeSearchInput] = useInput('');
-  const { me } = useSelector((state) => state.user);
+  const { me, logOutLoading } = useSelector((state) => state.user);
+
+  const dispatch = useDispatch();
+
+  const onLogOut = useCallback(() => {
+    dispatch(logoutRequestAction());
+  });
 
   const onSearch = useCallback(() => {
     if (searchInput) {
@@ -50,11 +58,6 @@ const AppLayout = ({ children }) => {
           </Link>
         </Menu.Item>
         <Menu.Item>
-          <Link href="/profile">
-            <a>profile</a>
-          </Link>
-        </Menu.Item>
-        <Menu.Item>
           <SearchInput
             enterButton
             value={searchInput}
@@ -63,26 +66,32 @@ const AppLayout = ({ children }) => {
           />
         </Menu.Item>
         <Menu.Item>
-          <Link href="/signup">
-            <a>signup</a>
+          <Link href="/profile">
+            <a>profile</a>
           </Link>
         </Menu.Item>
+        <Menu.Item>
+          <Link href="/signup">
+            <a>회원가입</a>
+          </Link>
+        </Menu.Item>
+        <Menu.Item>
+          {me ? (
+            <Button onClick={onLogOut} loading={logOutLoading}>
+              로그아웃
+            </Button>
+          ) : (
+            <Link href="/login">로그인</Link>
+          )}
+        </Menu.Item>
       </Menu>
+
       <Row gutter={8}>
-        <Col xs={24} md={6}>
+        <Col xs={24} md={0}>
           {me ? <UserProfile /> : <LoginForm />}
         </Col>
-        <Col xs={24} md={12}>
+        <Col xs={24} md={48}>
           {children}
-        </Col>
-        <Col xs={24} md={6}>
-          <a
-            href="https://www.naver.com"
-            target="_blank"
-            rel="noreferrer noopener"
-          >
-            로그인 창 위치 변경
-          </a>
         </Col>
       </Row>
     </div>

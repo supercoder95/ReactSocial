@@ -310,13 +310,11 @@ const reducer = (state = initialState, action) => {
         draft.changeNicknameDone = true;
         break;
 
-      //  ADD_POST_TO_ME___
       case ADD_POST_TO_ME:
-        draft.me.posts.unshift({ id: action.data });
+        draft.me.Posts.unshift({ id: action.data });
         break;
-      // REMOVE_POST_OF_ME___
       case REMOVE_POST_OF_ME:
-        draft.me.posts = draft.me.posts.filter((v) => v.id !== action.data);
+        draft.me.Posts = draft.me.posts.filter((v) => v.id !== action.data);
         break;
       default:
         break;
