@@ -14,7 +14,6 @@ import { logoutRequestAction } from '../reducers/user';
 
 const SearchInput = styled(Input.Search)`
   vertical-align: middle;
-  
 `;
 
 const Global = createGlobalStyle`
@@ -22,15 +21,13 @@ const Global = createGlobalStyle`
     margin-right: 0 !important;
     margin-left: 0 !important;
   }
-  
-  .ant-col: first-child {
-    padding-left: 0 !important;
-  }
-
-  .ant-col: last-child {
-    padding-right: 0 !important;
-  }
 `;
+
+const centerStyle = {
+  position: 'relative',
+  display: 'flex',
+  justifyContent: 'center',
+};
 
 const AppLayout = ({ children }) => {
   const [searchInput, onChangeSearchInput] = useInput('');
@@ -51,7 +48,7 @@ const AppLayout = ({ children }) => {
   return (
     <div>
       <Global />
-      <Menu mode="horizontal">
+      <Menu style={centerStyle} mode="horizontal">
         <Menu.Item>
           <Link href="/">
             <a>supercoder</a>
@@ -90,9 +87,11 @@ const AppLayout = ({ children }) => {
         <Col xs={24} md={0}>
           {me ? <UserProfile /> : <LoginForm />}
         </Col>
-        <Col xs={24} md={48}>
+        <Col md={5}></Col>
+        <Col xs={24} md={14}>
           {children}
         </Col>
+        <Col xs={0} md={5}></Col>
       </Row>
     </div>
   );

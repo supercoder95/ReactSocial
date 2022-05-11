@@ -1,3 +1,4 @@
+import { Col, Row } from 'antd';
 import axios from 'axios';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -64,11 +65,18 @@ const Home = () => {
 
   return (
     <AppLayout>
-      {me && <PostForm />}
-      {mainPosts.map((post) => (
-        <PostCard key={post.id} post={post} />
-      ))}
-      {/* <div ref={hasMorePosts && !loadPostLoading ? ref : undefined} /> */}
+      <Row justify="center">
+        <Col xs={24} xl={10}>
+          {me && <PostForm />}
+        </Col>
+      </Row>
+      <Row gutter={24} justify="left">
+        {mainPosts.map((post) => (
+          <Col xs={24} sm={14} md={10} lg={8} xl={8}>
+            <PostCard key={post.id} post={post} />
+          </Col>
+        ))}
+      </Row>
     </AppLayout>
   );
 };
