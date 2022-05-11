@@ -1,5 +1,5 @@
 # ReactSocial
-##사용기술
+## 사용기술
 - react와 next.js를 조합
 - 상태관리는 redux와 redux-saga를 통한 상태관리
 - 디자인은 ant-design을 사용하였음
